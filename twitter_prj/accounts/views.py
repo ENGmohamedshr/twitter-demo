@@ -1,5 +1,5 @@
 
-import email
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.migrations import serializer
@@ -64,21 +64,23 @@ class UserViewApi(viewsets.GenericViewSet):
         else:
             return Response(serializer.errors)   
 
-    
-    
 
-    
-    
+
+
+
 class ProfileViewApi(viewsets.ViewSet):
     
     authentication_classes = [TokenAuthentication]
     
+    lookup_field = 'username'
     
     
-    def list(self,request, pk =None,*args, **kwargs):
+    def retrieve(self,request, username =None,*args, **kwargs):
+        
+        
         
         try:
-            profile = Profile.objects.get(user = request.user)
+            profile = Profile.objects.get(user__username = username)
             serializer = ProfileSerializer(profile)
             return Response(serializer.data , status=st.HTTP_200_OK)
         
@@ -86,6 +88,7 @@ class ProfileViewApi(viewsets.ViewSet):
             return Response({'error':str(e)} , status=st.HTTP_400_BAD_REQUEST)
         
         
+    
     
     @action(detail=True , methods=['put','patch'])
     def editProfile(self,request,*args, **kwargs):

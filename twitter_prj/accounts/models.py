@@ -42,6 +42,10 @@ class UserManger(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser,PermissionsMixin):
+    
+    # class Roles(models.TextChoices):
+    #     ADMIN = adm
+    
     username  =models.CharField(verbose_name='username',max_length=100 ,  unique=True)
     email = models.EmailField(verbose_name='email', max_length=254 , unique=True)
     
@@ -75,12 +79,12 @@ class GenerateProfilePic(object):
         
         ext = filename.split('.')[-1]
         
-        path = f'media/accounts/{instance.user.id}/images'
-        name  = f'profile_img.{ext}'
+        path = f'media/{instance.user.id}/profileImgs'
+        name  = f'profileImg.{ext}'
         
         return os.path.join(path,name)
     
-profile_img_path = GenerateProfilePic()
+profile_img_path = GenerateProfilePic() 
 
 class Profile(models.Model):
     
@@ -116,3 +120,5 @@ class ChangePasswordToken(models.Model):
         """Check if the token is still valid based on the created_at timestamp."""
         expiration_time = self.created_at + timedelta(minutes=15)  # Set your expiration duration
         return timezone.now() < expiration_time
+    
+    

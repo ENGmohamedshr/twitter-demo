@@ -1,6 +1,6 @@
 from django.urls import path , include
 from rest_framework.routers import DefaultRouter
-from .views import EmailVerficationView, UserViewApi,ChangePasswordView
+from .views import EmailVerficationView, ProfileViewApi, UserViewApi,ChangePasswordView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -9,6 +9,9 @@ from rest_framework_simplejwt.views import (
 
 router= DefaultRouter()
 router.register(r'user' , UserViewApi , basename='users')
+router.register(r'user/profile' , ProfileViewApi , basename='profile')
+
+
 
 urlpatterns = [
     path('user/verify-email/<uuid:token>/',EmailVerficationView.as_view(),name='verify_email'),

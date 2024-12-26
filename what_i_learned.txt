@@ -1,0 +1,11 @@
+some principels of JWT auth
+
+how to make a Generic ForigenKey -> link 1 model with other models 
+
+how to use clean method to validate data before save 
+
+
+how to recieve serializer context to my view 
+
+make create and update methods in serializer 
+

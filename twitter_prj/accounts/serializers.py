@@ -1,4 +1,6 @@
-import email
+from ast import pattern
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 import re
 from rest_framework import serializers
 from .models import *
@@ -24,9 +26,32 @@ class SignUpSerializer(serializers.Serializer):
         
         return value
     
+    
+    
+    def validate_email(self , value):
+        pattern = r'^[a-zA-Z0-9_.]+@gmail\.[a-z]{1,3}'
+        
+        if not re.match(pattern , value):
+            raise ValueError({
+                "Error":"Not Accepted email",
+                "Example":"example@gmail.com"})
+            
+        return value
+    
+    def validate_password(self, value):
+        
+        pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{9,}$'
+        
+        if not re.match(pattern , value):
+            raise ValueError("Must contain at Least one upper Case and special char and number ")
+        
+        return value
+    
+    
+    
     def create(self , validated_data):
         user =User(username = validated_data['username'],
-                   email = validated_data['email'])
+                    email = validated_data['email'])
         
         user.set_password(validated_data['password'])
         user.save()
@@ -36,13 +61,11 @@ class SignUpSerializer(serializers.Serializer):
         model = User
         fields = ['username','email','password']
 
-class ProfileSerializer(serializers.Serializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-        
-        
-        
+
 
 class ForgetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -62,3 +85,16 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("password doesn't match".capitalize())
             
         return data
+    
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        token['email'] = user.email
+        # ...
+
+        return token
